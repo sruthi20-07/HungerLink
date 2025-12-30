@@ -2,18 +2,17 @@
   "name": "hungerlink",
   "version": "1.0.0",
   "description": "Real-time food surplus coordination system",
-  "main": "index.js",
+  "private": true,
+
   "scripts": {
-    "build": "npm run client:build && npm run server:build",
-    "start": "npm run server:start",
+    "build": "npm install && cd client && npm install && npm run build && cd .. && cd server && npm install && npm run build",
+    "start": "npm start --prefix server",
 
     "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
     "server:dev": "cd server && npm run dev",
-    "client:dev": "cd client && npm run dev",
-    "server:build": "cd server && npm run build",
-    "client:build": "cd client && npm run build",
-    "server:start": "cd server && npm start"
+    "client:dev": "cd client && npm run dev"
   },
+
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
