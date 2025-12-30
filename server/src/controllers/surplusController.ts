@@ -1,9 +1,8 @@
 import { Response } from "express";
-import { SurplusReport } from "../models/SurplusReport";
-import { AuthRequest } from "../middleware/auth";
-import { SurplusStatus } from "../types";
+import { SurplusReport } from "../models/SurplusReport.js";
+import { AuthRequest } from "../middleware/auth.js";
+import { SurplusStatus } from "../types.js";
 
-// 🥗 Provider creates surplus
 export const createSurplus = async (req: AuthRequest, res: Response) => {
   try {
     const { foodType, quantity, expiryTime, pickupLocation } = req.body;
@@ -28,13 +27,11 @@ export const createSurplus = async (req: AuthRequest, res: Response) => {
     });
 
     return res.status(201).json(report);
-  } catch (err) {
-    console.error("Create surplus error:", err);
+  } catch {
     return res.status(500).json({ message: "Failed to create surplus" });
   }
 };
 
-// 🏃 Volunteer accepts surplus
 export const acceptSurplus = async (req: AuthRequest, res: Response) => {
   try {
     const report = await SurplusReport.findById(req.params.id);
@@ -42,16 +39,14 @@ export const acceptSurplus = async (req: AuthRequest, res: Response) => {
 
     report.status = SurplusStatus.CLAIMED;
     report.claimedBy = req.user._id;
-
     await report.save();
+
     return res.json(report);
-  } catch (err) {
-    console.error("Accept surplus error:", err);
+  } catch {
     return res.status(500).json({ message: "Accept failed" });
   }
 };
 
-// 🚚 Update delivery status
 export const updateStatus = async (req: AuthRequest, res: Response) => {
   try {
     const report = await SurplusReport.findById(req.params.id);
@@ -61,13 +56,11 @@ export const updateStatus = async (req: AuthRequest, res: Response) => {
     await report.save();
 
     return res.json(report);
-  } catch (err) {
-    console.error("Update status error:", err);
+  } catch {
     return res.status(500).json({ message: "Status update failed" });
   }
 };
 
-// 🛡 Admin: view all surplus
 export const getAllSurplusForAdmin = async (_req: AuthRequest, res: Response) => {
   const reports = await SurplusReport.find().populate("providerId");
   return res.json(reports);

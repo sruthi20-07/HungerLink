@@ -1,67 +1,27 @@
-import mongoose, { Document, Schema } from "mongoose";
-import { SurplusStatus } from "../types";
+import mongoose, { Schema } from "mongoose";
+import { SurplusStatus } from "../types.js";
 
-export interface ISurplusReport extends Document {
-  providerId: mongoose.Types.ObjectId;
-  foodType: string;
-  estimatedQuantity: string;
-  pickupLocation: {
-    type: "Point";
-    coordinates: number[];
-  };
-  pickupAddress: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  };
-  availableUntil: Date;
-  status: SurplusStatus;
-  claimedBy?: mongoose.Types.ObjectId;
-}
-
-const SurplusReportSchema = new Schema<ISurplusReport>(
+const SurplusReportSchema = new Schema(
   {
     providerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-
-    foodType: { type: String, required: true },
-    estimatedQuantity: { type: String, required: true },
-
+    claimedBy: { type: Schema.Types.ObjectId, ref: "User" },
+    foodType: String,
+    estimatedQuantity: Number,
+    availableUntil: Date,
     pickupLocation: {
-      type: {
-        type: String,
-        enum: ["Point"],
-        required: true
-      },
-      coordinates: {
-        type: [Number],
-        required: true
-      }
+      type: { type: String, enum: ["Point"], default: "Point" },
+      coordinates: { type: [Number], required: true }
     },
-
     pickupAddress: {
-      street: { type: String, required: true },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
-      zipCode: { type: String, required: true },
-      country: { type: String, default: "India" }
+      street: String,
+      city: String,
+      state: String,
+      zipCode: String,
+      country: String
     },
-
-    availableUntil: { type: Date, required: true },
-
-    status: {
-      type: String,
-      enum: Object.values(SurplusStatus),
-      default: SurplusStatus.AVAILABLE
-    },
-
-    claimedBy: { type: Schema.Types.ObjectId, ref: "User" }
+    status: { type: String, enum: Object.values(SurplusStatus), default: SurplusStatus.AVAILABLE }
   },
   { timestamps: true }
 );
 
-export const SurplusReport = mongoose.model<ISurplusReport>(
-  "SurplusReport",
-  SurplusReportSchema
-);
+export const SurplusReport = mongoose.model("SurplusReport", SurplusReportSchema);

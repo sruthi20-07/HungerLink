@@ -1,15 +1,16 @@
-import { Response, NextFunction } from 'express';
-import Joi from 'joi';
-import { User } from '../models/User';
-import { SurplusReport } from '../models/SurplusReport';
-import { createError } from '../middleware/errorHandler';
-import { AuthRequest } from '../middleware/auth';
-import { UserRole } from '../types';
+import { Response, NextFunction } from "express";
+import Joi from "joi";
+import { User } from "../models/User.js";
+import { createError } from "../middleware/errorHandler.js";
+import { AuthRequest } from "../middleware/auth.js";
+import { UserRole } from "../types.js";
 
 const updateProfileSchema = Joi.object({
   organizationName: Joi.string().optional(),
   contactPhone: Joi.string().optional(),
-  location: Joi.object({ coordinates: Joi.array().items(Joi.number()).length(2).required() }).optional()
+  location: Joi.object({
+    coordinates: Joi.array().items(Joi.number()).length(2).required()
+  }).optional()
 });
 
 export const updateProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -18,11 +19,11 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
     if (error) throw createError(error.details[0].message, 400);
 
     const user = await User.findByIdAndUpdate(req.user._id, value, { new: true });
-    if (!user) throw createError('User not found', 404);
+    if (!user) throw createError("User not found", 404);
 
     res.json({ success: true, data: user });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 

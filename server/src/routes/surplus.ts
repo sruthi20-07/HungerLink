@@ -4,8 +4,8 @@ import {
   acceptSurplus,
   updateStatus,
   getAllSurplusForAdmin
-} from "../controllers/surplusController";
-import { authenticate } from "../middleware/auth";
+} from "../controllers/surplusController.js";
+import { authenticate } from "../middleware/auth.js";
 
 const router = express.Router();
 

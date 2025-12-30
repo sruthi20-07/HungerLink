@@ -1,42 +1,23 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../models/User";
-
-const JWT_SECRET = process.env.JWT_SECRET as string;
+import { User } from "../models/User.js";
 
 export interface AuthRequest extends Request {
   user?: any;
 }
 
-export const authenticate = async (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorization;
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "No token provided" });
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    const decoded: any = jwt.verify(token, JWT_SECRET);
-
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
     const user = await User.findById(decoded.id);
-
-    if (!user) {
-      res.status(401).json({ message: "User not found" });
-      return;
-    }
+    if (!user) return res.status(401).json({ message: "User not found" });
 
     req.user = user;
     next();
-    return;
-  } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
-    return;
+  } catch {
+    return res.status(401).json({ message: "Invalid token" });
   }
 };

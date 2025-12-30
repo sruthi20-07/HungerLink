@@ -1,0 +1,15 @@
+export enum SurplusStatus {
+  AVAILABLE = "AVAILABLE",
+  CLAIMED = "CLAIMED",
+  PICKED_UP = "PICKED_UP",
+  DELIVERED = "DELIVERED",
+  CANCELLED = "CANCELLED"
+}
+
+export enum UserRole {
+  ADMIN = "ADMIN",
+  PROVIDER = "PROVIDER",
+  NGO = "NGO",
+  VOLUNTEER = "VOLUNTEER",
+  NEEDY = "NEEDY"
+}

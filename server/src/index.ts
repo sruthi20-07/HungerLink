@@ -10,9 +10,10 @@ import compression from "compression";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
-import { connectDatabase } from "./config/database";
-import authRoutes from "./routes/auth";
-import surplusRoutes from "./routes/surplus";
+import { connectDatabase } from "./config/database.js";
+import authRoutes from "./routes/auth.js";
+import surplusRoutes from "./routes/surplus.js";
+
 
 const app = express();
 const server = createServer(app);

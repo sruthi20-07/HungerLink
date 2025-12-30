@@ -1,51 +1,32 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// Proof that env is loaded
-console.log("ENV CHECK →", process.env.MONGODB_URI);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-export const connectDatabase = async (): Promise<void> => {
+// Load root .env
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
+// Load server .env
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
+const MONGO_URI = process.env.MONGO_URI;
+
+console.log("ENV CHECK →", MONGO_URI);
+
+if (!MONGO_URI) {
+  console.error("❌ MONGO_URI is missing from environment variables");
+  process.exit(1);
+}
+
+export const connectDatabase = async () => {
   try {
-    const mongoUri = process.env.MONGODB_URI;
-
-    if (!mongoUri) {
-      throw new Error('MONGODB_URI is not defined in environment variables');
-    }
-
-    const options = {
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-      bufferCommands: false
-    };
-
-    await mongoose.connect(mongoUri, options);
-
-    console.log('✅ MongoDB connected successfully');
-
-    mongoose.connection.on('error', (error) => {
-      console.error('❌ MongoDB connection error:', error);
-    });
-
-    mongoose.connection.on('disconnected', () => {
-      console.warn('⚠️ MongoDB disconnected');
-    });
-
-    mongoose.connection.on('reconnected', () => {
-      console.log('🔄 MongoDB reconnected');
-    });
-
+    await mongoose.connect(MONGO_URI);
+    console.log("✅ MongoDB connected successfully");
   } catch (error) {
-    console.error('❌ Database connection failed:', error);
-    throw error;
-  }
-};
-
-export const disconnectDatabase = async (): Promise<void> => {
-  try {
-    await mongoose.disconnect();
-    console.log('📴 MongoDB disconnected');
-  } catch (error) {
-    console.error('❌ Error disconnecting from MongoDB:', error);
-    throw error;
+    console.error("❌ Database connection failed:", error);
+    process.exit(1);
   }
 };

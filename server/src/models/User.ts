@@ -9,6 +9,12 @@ export enum UserRole {
   NEEDY = 'NEEDY'
 }
 
+export interface NotificationPreferences {
+  email: boolean;
+  sms: boolean;
+  push: boolean;
+}
+
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -16,6 +22,7 @@ export interface IUser extends Document {
   role: UserRole;
   phone: string;
   location: string;
+  notificationPreferences: NotificationPreferences;
   comparePassword(candidate: string): Promise<boolean>;
 }
 
@@ -30,7 +37,13 @@ const UserSchema = new Schema<IUser>({
 
   phone: { type: String, required: true },
 
-  location: { type: String, required: true }
+  location: { type: String, required: true },
+
+  notificationPreferences: {
+    email: { type: Boolean, default: true },
+    sms: { type: Boolean, default: false },
+    push: { type: Boolean, default: true }
+  }
 }, { timestamps: true });
 
 UserSchema.pre('save', async function(next) {

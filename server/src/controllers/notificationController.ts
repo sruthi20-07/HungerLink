@@ -1,8 +1,8 @@
-import { Response, NextFunction } from 'express';
-import Joi from 'joi';
-import { User } from '../models/User';
-import { createError } from '../middleware/errorHandler';
-import { AuthRequest } from '../middleware/auth';
+import { Response, NextFunction } from "express";
+import Joi from "joi";
+import { User } from "../models/User.js";
+import { createError } from "../middleware/errorHandler.js";
+import { AuthRequest } from "../middleware/auth.js";
 
 const updatePreferencesSchema = Joi.object({
   email: Joi.boolean().optional(),
@@ -21,7 +21,7 @@ export const getNotificationHistory = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    res.json({ success: true, message: 'Notification history retrieved successfully', data: [] });
+    res.json({ success: true, message: "Notification history retrieved successfully", data: [] });
   } catch (error) {
     next(error);
   }
@@ -53,7 +53,7 @@ export const markNotificationAsRead = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  res.json({ success: true, message: 'Notification marked as read', data: { id: req.params.id } });
+  res.json({ success: true, message: "Notification marked as read", data: { id: req.params.id } });
 };
 
 export const registerFCMToken = async (
@@ -67,7 +67,7 @@ export const registerFCMToken = async (
 
     await User.findByIdAndUpdate(req.user._id, { $addToSet: { fcmTokens: value.token } });
 
-    res.json({ success: true, message: 'FCM token registered successfully' });
+    res.json({ success: true, message: "FCM token registered successfully" });
   } catch (error) {
     next(error);
   }
