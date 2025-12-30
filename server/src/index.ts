@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import path from "path";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -32,6 +33,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// -------------------- API ROUTES --------------------
 app.use("/auth", authRoutes);
 app.use("/surplus", surplusRoutes);
 
@@ -39,6 +41,16 @@ app.get("/health", (_req, res) => {
   res.json({ status: "OK" });
 });
 
+// -------------------- FRONTEND SERVING --------------------
+const __dirname = path.resolve();
+
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
+
+// -------------------- SERVER START --------------------
 async function startServer() {
   try {
     await connectDatabase();
