@@ -1,23 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authSlice from './slices/authSlice';
-import surplusSlice from './slices/surplusSlice';
-import socketSlice from './slices/socketSlice';
-import notificationSlice from './slices/notificationSlice';
+
+import authReducer from './slices/authSlice';
+import surplusReducer from './slices/surplusSlice';
+import socketReducer from './slices/socketSlice';
+import notificationReducer from './slices/notificationSlice';
 
 export const store = configureStore({
   reducer: {
-    auth: authSlice,
-    surplus: surplusSlice,
-    socket: socketSlice,
-    notifications: notificationSlice,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['socket/setSocket'],
-        ignoredPaths: ['socket.socket'],
-      },
-    }),
+    auth: authReducer,
+    surplus: surplusReducer,
+    socket: socketReducer,
+    notifications: notificationReducer
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

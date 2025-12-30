@@ -1,22 +1,30 @@
 import React from 'react';
-import { Container, Typography, Box } from '@mui/material';
+
+const notifications = [
+  'Pickup scheduled for Rice & Curry',
+  'New NGO nearby requested surplus',
+  'Pickup completed for Bread & Soup',
+];
 
 const NotificationsPage: React.FC = () => {
   return (
-    <Container maxWidth="lg">
-      <Box mb={4}>
-        <Typography variant="h4" gutterBottom>
-          Notifications
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          View and manage your notifications.
-        </Typography>
-      </Box>
-      
-      <Typography variant="body1">
-        Notifications management will be implemented here.
-      </Typography>
-    </Container>
+    <div style={{ padding: 32 }}>
+      <h2>Notifications</h2>
+
+      {notifications.map((note, i) => (
+        <div
+          key={i}
+          style={{
+            border: '1px solid #ccc',
+            borderRadius: 6,
+            padding: 12,
+            marginBottom: 10,
+          }}
+        >
+          {note}
+        </div>
+      ))}
+    </div>
   );
 };
 

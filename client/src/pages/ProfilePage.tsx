@@ -1,22 +1,17 @@
 import React from 'react';
-import { Container, Typography, Box } from '@mui/material';
 
 const ProfilePage: React.FC = () => {
   return (
-    <Container maxWidth="lg">
-      <Box mb={4}>
-        <Typography variant="h4" gutterBottom>
-          Profile
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Manage your account and organization information.
-        </Typography>
-      </Box>
-      
-      <Typography variant="body1">
-        Profile management will be implemented here.
-      </Typography>
-    </Container>
+    <div>
+      <h2>My Profile</h2>
+
+      <div style={{ border: '1px solid #ccc', padding: 16 }}>
+        <p><b>Name:</b> Demo Organization</p>
+        <p><b>Role:</b> Food Provider</p>
+        <p><b>Location:</b> Hyderabad</p>
+        <p><b>Impact:</b> 120 meals saved</p>
+      </div>
+    </div>
   );
 };
 
