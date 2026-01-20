@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { surplusAPI } from '../../services/api';
-import { SurplusReport, SurplusFilters, SurplusForm } from '../../types';
+import { SurplusReport, SurplusForm } from '../../types';
 
 interface SurplusState {
   reports: SurplusReport[];
