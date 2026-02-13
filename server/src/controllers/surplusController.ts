@@ -1,67 +1,85 @@
-import { Response } from "express";
-import { SurplusReport } from "../models/SurplusReport.js";
-import { AuthRequest } from "../middleware/auth.js";
-import { SurplusStatus } from "../types.js";
+import { Request, Response } from "express";
+import { io } from "../index";
+import Ngo from "../models/Ngo";
 
-export const createSurplus = async (req: AuthRequest, res: Response) => {
+let surplusData: any[] = [];
+
+// ✅ CREATE SURPLUS
+export const createSurplus = async (req: Request, res: Response) => {
   try {
-    const { foodType, quantity, expiryTime, pickupLocation } = req.body;
+    const { foodType, estimatedQuantity, description, latitude, longitude } =
+      req.body;
 
-    const report = await SurplusReport.create({
-      providerId: req.user._id,
+    if (!foodType || !estimatedQuantity) {
+      return res.status(400).json({
+        success: false,
+        message: "Food type and quantity required",
+      });
+    }
+
+    const newSurplus = {
+      id: Date.now().toString(),
       foodType,
-      estimatedQuantity: quantity,
-      availableUntil: new Date(expiryTime),
-      pickupLocation: {
-        type: "Point",
-        coordinates: [78.4867, 17.3850]
-      },
-      pickupAddress: {
-        street: pickupLocation,
-        city: "Hyderabad",
-        state: "Telangana",
-        zipCode: "500001",
-        country: "India"
-      },
-      status: SurplusStatus.AVAILABLE
+      estimatedQuantity,
+      description: description || "",
+      status: "available",
+      claimedBy: null,
+      createdAt: new Date(),
+    };
+
+    surplusData.unshift(newSurplus);
+
+    io.emit("new-surplus", newSurplus);
+
+    return res.status(201).json({
+      success: true,
+      data: newSurplus,
     });
-
-    return res.status(201).json(report);
-  } catch {
-    return res.status(500).json({ message: "Failed to create surplus" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
 
-export const acceptSurplus = async (req: AuthRequest, res: Response) => {
-  try {
-    const report = await SurplusReport.findById(req.params.id);
-    if (!report) return res.status(404).json({ message: "Surplus not found" });
-
-    report.status = SurplusStatus.CLAIMED;
-    report.claimedBy = req.user._id;
-    await report.save();
-
-    return res.json(report);
-  } catch {
-    return res.status(500).json({ message: "Accept failed" });
-  }
+// ✅ GET ALL
+export const getAllSurplus = async (_req: Request, res: Response) => {
+  return res.json({
+    success: true,
+    data: surplusData,
+  });
 };
 
-export const updateStatus = async (req: AuthRequest, res: Response) => {
-  try {
-    const report = await SurplusReport.findById(req.params.id);
-    if (!report) return res.status(404).json({ message: "Surplus not found" });
+// ✅ ACCEPT SURPLUS
+export const acceptSurplus = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { ngoName } = req.body;
 
-    report.status = req.body.status as SurplusStatus;
-    await report.save();
+  const surplus = surplusData.find((item) => item.id === id);
 
-    return res.json(report);
-  } catch {
-    return res.status(500).json({ message: "Status update failed" });
+  if (!surplus) {
+    return res.status(404).json({
+      success: false,
+      message: "Surplus not found",
+    });
   }
-};
 
-export const getAllSurplusForAdmin = async (_req: AuthRequest, res: Response) => {
-  const reports = await SurplusReport.find().populate("providerId");
-  return res.json(reports);
+  if (surplus.status === "claimed") {
+    return res.status(400).json({
+      success: false,
+      message: "Already claimed",
+    });
+  }
+
+  surplus.status = "claimed";
+  surplus.claimedBy = ngoName;
+
+  io.emit("surplus-claimed", surplus);
+
+  return res.json({
+    success: true,
+    data: surplus,
+  });
 };

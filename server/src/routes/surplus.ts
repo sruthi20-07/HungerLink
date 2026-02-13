@@ -2,25 +2,18 @@ import express from "express";
 import {
   createSurplus,
   acceptSurplus,
-  updateStatus,
-  getAllSurplusForAdmin
-} from "../controllers/surplusController.js";
-import { authenticate } from "../middleware/auth.js";
+  getAllSurplus
+} from "../controllers/surplusController";
 
 const router = express.Router();
 
-router.use(authenticate);
-
-// Provider creates surplus
+// ---------------- CREATE SURPLUS ----------------
 router.post("/create", createSurplus);
 
-// Volunteer accepts surplus
+// ---------------- ACCEPT SURPLUS ----------------
 router.post("/accept/:id", acceptSurplus);
 
-// Update status
-router.put("/status/:id", updateStatus);
-
-// Admin view all surplus
-router.get("/admin/all", getAllSurplusForAdmin);
+// ---------------- GET ALL SURPLUS ----------------
+router.get("/", getAllSurplus);
 
 export default router;

@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { surplusAPI } from '../../services/api';
-import { SurplusReport, SurplusForm } from '../../types';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { surplusAPI } from "../../services/api";
+import { SurplusReport, SurplusForm } from "../../types";
 
 interface SurplusState {
   reports: SurplusReport[];
@@ -13,7 +13,7 @@ const initialState: SurplusState = {
 };
 
 export const fetchReports = createAsyncThunk(
-  'surplus/fetchReports',
+  "surplus/fetchReports",
   async () => {
     const res = await surplusAPI.getAll();
     return res.data;
@@ -21,7 +21,7 @@ export const fetchReports = createAsyncThunk(
 );
 
 export const createReport = createAsyncThunk(
-  'surplus/createReport',
+  "surplus/createReport",
   async (data: SurplusForm) => {
     const res = await surplusAPI.create(data);
     return res.data;
@@ -29,7 +29,7 @@ export const createReport = createAsyncThunk(
 );
 
 const surplusSlice = createSlice({
-  name: 'surplus',
+  name: "surplus",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -44,7 +44,7 @@ const surplusSlice = createSlice({
       .addCase(createReport.fulfilled, (state, action) => {
         state.reports.unshift(action.payload);
       });
-  }
+  },
 });
 
 export default surplusSlice.reducer;

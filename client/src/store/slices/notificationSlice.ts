@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface NotificationState {
   unreadCount: number;
@@ -9,10 +9,10 @@ const initialState: NotificationState = {
 };
 
 const notificationSlice = createSlice({
-  name: 'notifications',
+  name: "notifications",
   initialState,
   reducers: {
-    setUnreadCount(state, action) {
+    setUnreadCount(state, action: PayloadAction<number>) {
       state.unreadCount = action.payload;
     },
   },

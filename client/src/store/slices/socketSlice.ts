@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const socketSlice = createSlice({
-  name: 'socket',
+  name: "socket",
   initialState: {},
   reducers: {
     connectSocket: () => {},

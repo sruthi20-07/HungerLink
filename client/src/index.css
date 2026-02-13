@@ -1,93 +1,43 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #4e73df, #1cc88a);
+  color: #fff;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.container {
+  padding: 30px;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+.navbar {
+  background: #2e59d9;
+  padding: 15px;
+  display: flex;
+  gap: 20px;
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+.card {
+  background: white;
+  color: #333;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+button {
+  background: #4e73df;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
 }
 
-/* Loading spinner */
-.loading-spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Map container */
-.map-container {
-  height: 400px;
-  width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-/* Responsive utilities */
-@media (max-width: 600px) {
-  .hide-mobile {
-    display: none !important;
-  }
-}
-
-@media (min-width: 601px) {
-  .show-mobile {
-    display: none !important;
-  }
-}
-
-/* Custom Material-UI overrides */
-.MuiCard-root {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-}
-
-.MuiButton-root {
-  text-transform: none !important;
-  font-weight: 600 !important;
-}
-
-.urgent-indicator {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
+.error {
+  color: red;
 }

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export interface AuthState {
   user: any;
@@ -14,21 +14,20 @@ const initialState: AuthState = {
   isAuthenticated: false,
 };
 
-// 🧪 Fake login for hackathon demo
 export const login = createAsyncThunk(
-  'auth/login',
+  "auth/login",
   async (data: { email: string; password: string }) => {
     return {
-      id: '1',
+      id: "1",
       email: data.email,
-      organizationName: 'Demo Org',
-      role: 'FOOD_PROVIDER',
+      organizationName: "Demo Org",
+      role: "food_provider",
     };
   }
 );
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     logoutUser(state) {
@@ -36,19 +35,19 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(login.pending, state => {
+      .addCase(login.pending, (state) => {
         state.loading = true;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        state.isAuthenticated = true; // 🔥 THIS was missing
+        state.isAuthenticated = true;
       })
-      .addCase(login.rejected, state => {
+      .addCase(login.rejected, (state) => {
         state.loading = false;
-        state.error = 'Login failed';
+        state.error = "Login failed";
       });
   },
 });

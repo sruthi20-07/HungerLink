@@ -1,47 +1,46 @@
-import axios from 'axios';
-import type { AxiosInstance } from 'axios';
+import axios from "axios";
 
-import { getStoredToken, removeAuthToken } from '../utils/auth';
-import { SurplusForm, ProfileUpdateForm } from '../types';
-
-// Use environment variable if available, otherwise fallback to localhost for local dev
-const API_BASE_URL =
-  process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
-const api: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+const api = axios.create({
+  baseURL: "http://localhost:5000/api",
 });
 
+// Attach JWT automatically
 api.interceptors.request.use((config) => {
-  const token = getStoredToken();
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const token = localStorage.getItem("hungerlink_token");
+
+  if (token) {
+    if (config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
+
   return config;
 });
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      removeAuthToken();
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+// ---------------- SURPLUS ----------------
 
 export const surplusAPI = {
-  create: (data: SurplusForm) => api.post('/surplus', data),
-  getAll: () => api.get('/surplus'),
-  getOne: (id: string) => api.get(`/surplus/${id}`),
-  update: (id: string, data: Partial<SurplusForm>) =>
-    api.put(`/surplus/${id}`, data),
-  remove: (id: string) => api.delete(`/surplus/${id}`),
+  create: (data: any) => api.post("/surplus/create", data),
+  getAll: () => api.get("/surplus"),
+  accept: (id: string) => api.post(`/surplus/accept/${id}`),
+  updateStatus: (id: string, status: string) =>
+    api.put(`/surplus/status/${id}`, { status }),
 };
 
-export const profileAPI = {
-  update: (data: ProfileUpdateForm) => api.put('/profile', data),
+// ---------------- NGO ----------------
+
+export const ngoAPI = {
+  getAll: () => api.get("/ngos"),
+  getNearby: (latitude: number, longitude: number) =>
+    api.get(`/ngos/nearby?latitude=${latitude}&longitude=${longitude}`),
+};
+
+// ---------------- AUTH ----------------
+
+export const authAPI = {
+  login: (data: { email: string; password: string }) =>
+    api.post("/auth/login", data),
+  register: (data: any) => api.post("/auth/register", data),
 };
 
 export default api;

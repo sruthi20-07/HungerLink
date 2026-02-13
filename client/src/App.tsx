@@ -1,31 +1,123 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
-import SurplusListPage from './pages/surplus/SurplusListPage';
-import CreateSurplusPage from './pages/surplus/CreateSurplusPage';
-import NotificationsPage from './pages/NotificationsPage';
-import ProfilePage from './pages/ProfilePage';
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
 
-function App() {
+import NgoDashboard from "./pages/dashboard/NgoDashboard";
+import ProviderDashboard from "./pages/dashboard/ProviderDashboard";
+
+import CreateSurplusPage from "./pages/surplus/CreateSurplusPage";
+import SurplusListPage from "./pages/surplus/SurplusListPage";
+
+import NotificationsPage from "./pages/notifications/NotificationsPage";
+import NgoListPage from "./pages/ngos/NgoListPage";
+
+const App: React.FC = () => {
+  const userString = localStorage.getItem("currentUser");
+  const currentUser = userString ? JSON.parse(userString) : null;
+
+  const isAuthenticated = !!currentUser;
+
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/login" />} />
+    <BrowserRouter>
+      <Routes>
 
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+        {/* ---------------- PUBLIC ROUTES ---------------- */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
-      <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/surplus" element={<SurplusListPage />} />
-      <Route path="/surplus/create" element={<CreateSurplusPage />} />
-      <Route path="/notifications" element={<NotificationsPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
+        {/* ---------------- NGO DASHBOARD ---------------- */}
+        <Route
+          path="/ngo-dashboard"
+          element={
+            isAuthenticated && currentUser?.role === "ngo" ? (
+              <NgoDashboard />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
 
-      <Route path="*" element={<Navigate to="/login" />} />
-    </Routes>
+        {/* ---------------- PROVIDER DASHBOARD ---------------- */}
+        <Route
+          path="/dashboard"
+          element={
+            isAuthenticated && currentUser?.role === "provider" ? (
+              <ProviderDashboard />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* ---------------- CREATE SURPLUS ---------------- */}
+        <Route
+          path="/create-surplus"
+          element={
+            isAuthenticated ? (
+              <CreateSurplusPage />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* ---------------- VIEW SURPLUS ---------------- */}
+        <Route
+          path="/surplus"
+          element={
+            isAuthenticated ? (
+              <SurplusListPage />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* ---------------- NOTIFICATIONS ---------------- */}
+        <Route
+          path="/notifications"
+          element={
+            isAuthenticated ? (
+              <NotificationsPage />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* ---------------- NGO LIST ---------------- */}
+        <Route
+          path="/ngos"
+          element={
+            isAuthenticated ? (
+              <NgoListPage />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* ---------------- DEFAULT ---------------- */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              currentUser?.role === "ngo" ? (
+                <Navigate to="/ngo-dashboard" replace />
+              ) : (
+                <Navigate to="/dashboard" replace />
+              )
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

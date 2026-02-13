@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import path from "path";
 import express from "express";
+import path from "path";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -10,61 +10,72 @@ import compression from "compression";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
-import { connectDatabase } from "./config/database.js";
-import authRoutes from "./routes/auth.js";
-import surplusRoutes from "./routes/surplus.js";
-
+import { connectDatabase } from "./config/database";
+import authRoutes from "./routes/auth";
+import surplusRoutes from "./routes/surplus";
+import ngoRoutes from "./routes/ngos";
 
 const app = express();
 const server = createServer(app);
 
-const io = new Server(server, {
+// 🔥 EXPORT SOCKET FOR CONTROLLERS
+export const io = new Server(server, {
   cors: {
     origin: process.env.CORS_ORIGIN || "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+  },
 });
 
-const PORT = Number(process.env.PORT) || 5000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 5000;
+
+// -------------------- MIDDLEWARE --------------------
 
 app.use(helmet());
-app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:3000" }));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+  })
+);
 app.use(compression());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// -------------------- API ROUTES --------------------
+// -------------------- ROUTES --------------------
+
 app.use("/auth", authRoutes);
-app.use("/surplus", surplusRoutes);
+app.use("/api/surplus", surplusRoutes);
+app.use("/api/ngos", ngoRoutes);
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "OK" });
+  res.status(200).json({ status: "OK" });
 });
 
-// -------------------- FRONTEND SERVING --------------------
-const __dirname = path.resolve();
+// -------------------- STATIC FRONTEND (Production Only) --------------------
 
-app.use(express.static(path.join(__dirname, "client/build")));
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "client/build")));
 
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(__dirname, "client/build", "index.html"));
-});
-
-// -------------------- SERVER START --------------------
-async function startServer() {
-  try {
-    await connectDatabase();
-    server.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`🔗 Health: http://localhost:${PORT}/health`);
-    });
-  } catch (err) {
-    console.error("❌ Startup failed:", err);
-    process.exit(1);
-  }
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  });
 }
 
-startServer();
+// -------------------- START SERVER --------------------
 
-export { io };
+const startServer = async () => {
+  try {
+    await connectDatabase();
+
+    server.listen(PORT, () => {
+      console.log("✅ MongoDB Connected");
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🔗 Health Check: http://localhost:${PORT}/health`);
+    });
+  } catch (error) {
+    console.error("❌ Server startup failed:", error);
+    process.exit(1);
+  }
+};
+
+startServer();

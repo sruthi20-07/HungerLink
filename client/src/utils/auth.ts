@@ -1,23 +1,12 @@
-const TOKEN_KEY = 'hungerlink_token';
-
-export const setAuthToken = (token: string): void => {
-  localStorage.setItem(TOKEN_KEY, token);
+export const getCurrentUser = () => {
+  const user = localStorage.getItem("currentUser");
+  return user ? JSON.parse(user) : null;
 };
 
-export const getStoredToken = (): string | null => {
-  return localStorage.getItem(TOKEN_KEY);
+export const isAuthenticated = () => {
+  return !!localStorage.getItem("currentUser");
 };
 
-export const removeAuthToken = (): void => {
-  localStorage.removeItem(TOKEN_KEY);
-};
-
-export const isTokenExpired = (token: string): boolean => {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const currentTime = Date.now() / 1000;
-    return payload.exp < currentTime;
-  } catch (error) {
-    return true;
-  }
+export const logout = () => {
+  localStorage.removeItem("currentUser");
 };

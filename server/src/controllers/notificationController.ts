@@ -1,8 +1,8 @@
 import { Response, NextFunction } from "express";
 import Joi from "joi";
-import { User } from "../models/User.js";
-import { createError } from "../middleware/errorHandler.js";
-import { AuthRequest } from "../middleware/auth.js";
+import { User } from "../models/User";
+import { createError } from "../middleware/errorHandler";
+import { AuthRequest } from "../middleware/auth";
 
 const updatePreferencesSchema = Joi.object({
   email: Joi.boolean().optional(),

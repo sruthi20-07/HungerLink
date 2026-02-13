@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { SurplusStatus } from "../types.js";
+import { SurplusStatus } from "../types";
 
 const SurplusReportSchema = new Schema(
   {
